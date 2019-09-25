@@ -1,9 +1,3 @@
-<ListView [items]="challenges" (itemTap)="onItemTap($event)" iosEstimatedRowHeight="65">
-    <ng-template let-challenge="item" let-i="index">
-        <GridLayout rows="40,20" columns="50,*">
-            <Label [text]="i" row="0" column="0" rowSpan="2"></Label>
-            <Label [text]="challenge" row="0" column="1"></Label>
-            <Label text="Item content row 2" row="1" column="1"></Label>
-        </GridLayout>
-    </ng-template>
-</ListView>
+<StackLayout>
+    <Label class="title" [text]="challengeTitle" horizontalAlignment="center"></Label>
+</StackLayout>
