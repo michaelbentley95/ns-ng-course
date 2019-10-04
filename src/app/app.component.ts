@@ -1,40 +1,37 @@
-import { UIService } from './shared/us.service';
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef } from "@angular/core";
-import { Subscription } from 'rxjs';
-import { RadSideDrawerComponent } from 'nativescript-ui-sidedrawer/angular/side-drawer-directives';
-import { RadSideDrawer } from 'nativescript-ui-sidedrawer';
+import { UIService } from "./shared/us.service";
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef, ViewContainerRef } from "@angular/core";
+import { Subscription } from "rxjs";
+import { RadSideDrawerComponent } from "nativescript-ui-sidedrawer/angular/side-drawer-directives";
+import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 
 @Component({
     selector: "ns-app",
-    templateUrl: "./app.component.html"
+    templateUrl: "./app.component.html",
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
-
     @ViewChild(RadSideDrawerComponent, { static: false }) drawerComponent: RadSideDrawerComponent;
 
-    activeChallenge: string = '';
+    activeChallenge: string = "";
     private drawerSub: Subscription;
     private drawer: RadSideDrawer;
 
-    constructor(private uiService: UIService, private changeDetectionRef: ChangeDetectorRef) {
-
-    }
+    constructor(private uiService: UIService, private changeDetectionRef: ChangeDetectorRef, private vcRef: ViewContainerRef) {}
 
     ngOnInit() {
-        this.drawerSub = this.uiService.drawerState.subscribe(x=> {
+        this.drawerSub = this.uiService.drawerState.subscribe(x => {
             if (this.drawer) {
                 this.drawer.toggleDrawerState();
             }
         });
+        this.uiService.setRootVCRef(this.vcRef);
     }
 
     ngAfterViewInit() {
-        this.drawer = this.drawerComponent.sideDrawer
+        this.drawer = this.drawerComponent.sideDrawer;
         this.changeDetectionRef.detectChanges();
     }
 
-    onChallengeInput(challengeDescription: string)
-    {
+    onChallengeInput(challengeDescription: string) {
         this.activeChallenge = challengeDescription;
     }
 
@@ -43,7 +40,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngOnDestroy() {
-        if(this.drawerSub){
+        if (this.drawerSub) {
             this.drawerSub.unsubscribe();
         }
     }

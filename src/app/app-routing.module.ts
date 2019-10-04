@@ -2,30 +2,18 @@ import { NgModule } from "@angular/core";
 import { NativeScriptRouterModule } from "nativescript-angular/router";
 import { Routes } from "@angular/router";
 
-import { AuthComponent } from './auth/auth.component';
-import { CurrentChallengeComponent } from './challenges/current-challenge/current-challenge.component';
-import { ChallengeEditComponent } from './challenges/challenge-edit/challenge-edit.component';
-import { TodayComponent } from './challenges/today/today.component';
-import { ChallengesTabsComponent } from "./challenges/challenges-tabs/challenges-tabs.component";
+import { AuthComponent } from "./auth/auth.component";
 
 const routes: Routes = [
-    { path: '', component: AuthComponent },
-
+    { path: "", component: AuthComponent },
     {
-    path: 'challenges',
-    children: [
-        { path: 'tabs', component: ChallengesTabsComponent, children: [
-            { path: 'today', component: TodayComponent, outlet: 'today' },
-            { path: 'current-challenge', component: CurrentChallengeComponent, outlet: 'currentChallenge' },
-        ]},
-        { path: ':mode', component: ChallengeEditComponent },
-        { path: '', redirectTo: '/challenges/tabs', pathMatch: "full" },
-    ] },
+        path: "challenges",
+        loadChildren: "~/app/challenges/challenges.module#ChallengesModule",
+    },
 ];
 
 @NgModule({
     imports: [NativeScriptRouterModule.forRoot(routes)],
-    exports: [NativeScriptRouterModule]
+    exports: [NativeScriptRouterModule],
 })
-
 export class AppRoutingModule {}
