@@ -14,8 +14,8 @@
         </StackLayout>
 
         <StackLayout *ngIf="currentChallenge">
-            <Label class="h1 text-center" text="Take a walk every day"></Label>
-            <Label class="body text-center" text="Walk for at least 20 minutes"></Label>
+            <Label class="h1 text-center" [text]="currentChallenge.title"></Label>
+            <Label class="body text-center" [text]="currentChallenge.description"></Label>
         </StackLayout>
 
         <GridLayout rows="auto,*,*,*,*,*,*" columns="*,*,*,*,*,*,*" *ngIf="currentChallenge">

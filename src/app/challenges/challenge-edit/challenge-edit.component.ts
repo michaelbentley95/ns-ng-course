@@ -1,3 +1,4 @@
+import { ChallengeService } from "./../challenge.service";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { PageRoute, RouterExtensions } from "nativescript-angular/router";
@@ -10,7 +11,7 @@ import { PageRoute, RouterExtensions } from "nativescript-angular/router";
 export class ChallengeEditComponent implements OnInit {
     isCreating = true;
 
-    constructor(private activatedRoute: ActivatedRoute, private pageRoute: PageRoute, private router: RouterExtensions) {}
+    constructor(private activatedRoute: ActivatedRoute, private pageRoute: PageRoute, private router: RouterExtensions, private challengeService: ChallengeService) {}
 
     ngOnInit() {
         this.pageRoute.activatedRoute.subscribe(activatedRoute =>
@@ -25,7 +26,7 @@ export class ChallengeEditComponent implements OnInit {
     }
 
     onSubmit(title: string, description: string) {
-        console.log(title, description);
+        this.challengeService.createNewChallenge(title, description);
         this.router.backToPreviousPage();
     }
 }
