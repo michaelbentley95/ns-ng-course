@@ -1,3 +1,4 @@
+import { AuthService } from "./auth/auth.service";
 import { UIService } from "./shared/us.service";
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef, ViewContainerRef } from "@angular/core";
 import { Subscription } from "rxjs";
@@ -15,7 +16,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     private drawerSub: Subscription;
     private drawer: RadSideDrawer;
 
-    constructor(private uiService: UIService, private changeDetectionRef: ChangeDetectorRef, private vcRef: ViewContainerRef) {}
+    constructor(
+        private uiService: UIService,
+        private changeDetectionRef: ChangeDetectorRef,
+        private vcRef: ViewContainerRef,
+        private authService: AuthService
+    ) {}
 
     ngOnInit() {
         this.drawerSub = this.uiService.drawerState.subscribe(x => {
@@ -24,6 +30,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
             }
         });
         this.uiService.setRootVCRef(this.vcRef);
+        this.authService.autoLogin().subscribe(success => {
+            console.log(success);
+        });
     }
 
     ngAfterViewInit() {
@@ -37,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
     onLogout() {
         this.uiService.toggleDrawer();
+        this.authService.logout();
     }
 
     ngOnDestroy() {
