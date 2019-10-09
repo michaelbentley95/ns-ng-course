@@ -1,6 +1,6 @@
 import { Day, DayStatus } from "./day.model";
 export class Challenge {
-    constructor(public title: string, public description: string, year: number, public month: number, private _days: Day[] = []) {
+    constructor(public title: string, public description: string, public year: number, public month: number, private _days: Day[] = []) {
         if (_days.length > 0) {
             return;
         }

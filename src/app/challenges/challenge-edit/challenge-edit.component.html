@@ -2,12 +2,12 @@
 <FlexboxLayout class="form">
     <StackLayout class="input-field">
         <Label class="label" text="Title" [ngClass]="{invalid: !titleCtrl.valid && titleCtrl.touched}"></Label>
-        <TextField class="input" returnKeyType="next" required ngModel #titleCtrl="ngModel"></TextField>
+        <TextField [(ngModel)]="title" class="input" returnKeyType="next" required #titleCtrl="ngModel"></TextField>
         <Label *ngIf="!titleCtrl.valid && titleCtrl.touched" text="Please enter a valid Title"></Label>
     </StackLayout>
     <StackLayout class="input-field">
         <Label class="label" text="Description" [ngClass]="{invalid: !descriptionControl.valid && descriptionControl.touched}"></Label>
-        <TextView class="input" returnKeyType="done" required ngModel #descriptionControl="ngModel"></TextView>
+        <TextView [(ngModel)]="description" class="input" returnKeyType="done" required #descriptionControl="ngModel"></TextView>
         <Label *ngIf="!descriptionControl.valid && descriptionControl.touched" text="Please enter a valid Description"></Label>
     </StackLayout>
     <Button class="btn btn-primary" text="Save" [isEnabled]="titleCtrl.valid && descriptionControl.valid" (tap)="onSubmit(titleCtrl.value, descriptionControl.value)"></Button>
