@@ -1,3 +1,4 @@
+import { DayStatus } from "./../day.model";
 import { Subscription } from "rxjs";
 import { UIService } from "./../../shared/us.service";
 import { DayModalComponent } from "./../day-modal/day-modal.component";
@@ -5,6 +6,7 @@ import { Component, ViewContainerRef, OnInit, OnDestroy } from "@angular/core";
 import { ModalDialogService } from "nativescript-angular/modal-dialog";
 import { ChallengeService } from "../challenge.service";
 import { Challenge } from "../challenge.model";
+import { Day } from "../day.model";
 
 @Component({
     selector: "ns-current-challenge",
@@ -25,15 +27,22 @@ export class CurrentChallengeComponent implements OnInit, OnDestroy {
         });
     }
 
-    onChangeStatus() {
+    onChangeStatus(day: Day) {
+        //If the day is not settable, then don't open the modal
+        if (!this.getIsSettable(day.dayInMonth)) {
+            return;
+        }
         this.modalDialog
             .showModal(DayModalComponent, {
                 fullscreen: true,
                 viewContainerRef: this.uiService.getRootVCRef() ? this.uiService.getRootVCRef() : this.vcRef,
-                context: { date: new Date() },
+                context: { date: day.date, status: day.status },
             })
-            .then((action: string) => {
-                console.log(action);
+            .then((status: DayStatus) => {
+                if (status === DayStatus.Open) {
+                    return;
+                }
+                this.challengeService.updateDayStatus(day.dayInMonth, status);
             });
     }
 
@@ -50,5 +59,9 @@ export class CurrentChallengeComponent implements OnInit, OnDestroy {
         if (this.currChallengeSub) {
             this.currChallengeSub.unsubscribe();
         }
+    }
+
+    getIsSettable(dayInMonth: number) {
+        return dayInMonth <= new Date().getDate();
     }
 }

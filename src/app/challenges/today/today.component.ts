@@ -29,4 +29,13 @@ export class TodayComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         if (this.currChallengeSub) this.currChallengeSub.unsubscribe();
     }
+
+    getActionName() {
+        if (this.currentDay.status === DayStatus.Completed) {
+            return "complete";
+        } else if (this.currentDay.status === DayStatus.Failed) {
+            return "fail";
+        }
+        return null;
+    }
 }
