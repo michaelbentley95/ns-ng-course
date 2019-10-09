@@ -11,5 +11,6 @@
         <Label *ngIf="!passwordControlIsValid" text="Please enter a valid Password"></Label>
     </StackLayout>
     <Button [text]="isLogin ? 'Signup Instead' : 'Login Instead'" class="btn btn-flat" (tap)="onSwitch()"></Button>
-    <Button [text]="!isLogin ? 'Signup' : 'Login'" class="btn btn-primary btn-rounded-lg" (tap)="onSubmit()" [isEnabled]="form.valid"></Button>
+    <Button *ngIf="!isLoading" [text]="!isLogin ? 'Signup' : 'Login'" class="btn btn-primary btn-rounded-lg" (tap)="onSubmit()" [isEnabled]="form.valid"></Button>
+    <ActivityIndicator [busy]="isLoading"></ActivityIndicator>
 </StackLayout>
