@@ -14,13 +14,13 @@ export class AuthGuard implements CanLoad {
             take(1),
             switchMap(currentUser => {
                 if (!currentUser || !currentUser.token) {
-                    return this.authService.autoLogin;
+                    return this.authService.autoLogin();
                 }
                 return of(true);
             }),
             tap(isAuth => {
-                if(!isAuth) {
-                    this.router.navigate(['/auth']);
+                if (!isAuth) {
+                    this.router.navigate(["/auth"]);
                 }
             })
         );
