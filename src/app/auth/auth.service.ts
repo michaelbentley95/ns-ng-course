@@ -6,6 +6,7 @@ import { alert } from "tns-core-modules/ui/dialogs";
 import { User } from "./user.model";
 import { RouterExtensions } from "nativescript-angular/router";
 import { setString, getString, hasKey, remove } from "tns-core-modules/application-settings";
+import { ChallengeService } from "../challenges/challenge.service";
 
 const FIREBASE_API_KEY = "AIzaSyAsOviqD3TXQNMDGIv1rUhIetjQZcM2-fc";
 
