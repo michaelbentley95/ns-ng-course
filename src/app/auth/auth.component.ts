@@ -3,6 +3,7 @@ import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { TextField } from "tns-core-modules/ui/text-field";
+import { alert } from "tns-core-modules/ui/dialogs";
 
 @Component({
     selector: "ns-auth",
@@ -47,30 +48,39 @@ export class AuthComponent implements OnInit {
 
         const email = this.form.get("email").value;
         const password = this.form.get("password").value;
-        this.form.reset();
         this.emailControlIsValid = true;
         this.passwordControlIsValid = true;
         this.isLoading = true;
         if (this.isLogin) {
-            this.authService.login(email, password).subscribe(
-                resData => {
+            this.authService
+                .login(email, password)
+                .then(result => {
+                    this.form.reset();
                     this.isLoading = false;
-                    this.router.navigate(["/challenges"]);
-                },
-                err => {
-                    console.log(err);
+                    this.router.navigate(["/challenges"], { clearHistory: true });
+                })
+                .catch(error => {
+                    console.log(error);
                     this.isLoading = false;
-                }
-            );
+                });
         } else {
-            this.authService.signUp(email, password).subscribe(
-                resData => {
-                    this.isLoading = false;
-                    this.router.navigate(["/challenges"], {clearHistory: true});
+            this.authService.signUp(email, password).then(
+                user => {
+                    alert({
+                        title: "User created",
+                        message: "email: " + user.email,
+                        okButtonText: "Nice!",
+                    }).then(() => {
+                        this.isLoading = false;
+                        this.router.navigate(["/challenges"], { clearHistory: true });
+                    });
                 },
-                err => {
-                    console.log(err);
-                    this.isLoading = false;
+                errorMessage => {
+                    alert({
+                        title: "No user created",
+                        message: errorMessage,
+                        okButtonText: "OK, got it",
+                    }).then(() => (this.isLoading = false));
                 }
             );
         }

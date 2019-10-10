@@ -12,22 +12,29 @@ import { ChallengeService } from "../challenge.service";
 export class ChallengesTabsComponent implements OnInit {
     isLoading = false;
 
-    constructor(private router: RouterExtensions, private activeRoute: ActivatedRoute, private page: Page, private challengeService: ChallengeService) {}
+    constructor(
+        private router: RouterExtensions,
+        private activeRoute: ActivatedRoute,
+        private page: Page,
+        private challengeService: ChallengeService
+    ) {}
 
     ngOnInit() {
         this.isLoading = true;
-        this.challengeService.fetchCurrentChallenge().subscribe(
-            res => {
-                console.log(res);
-                this.isLoading = false;
-                this.loadTabRoutes();
-            },
-            err => {
-                console.log(err);
-                this.isLoading = false;
-                this.loadTabRoutes();
-            }
-        );
+        // this.challengeService.fetchCurrentChallenge().subscribe(
+        //     res => {
+        //         console.log(res);
+
+        //     },
+        //     err => {
+        //         console.log(err);
+        //         this.isLoading = false;
+        //         this.loadTabRoutes();
+        //     }
+        // );
+
+        this.isLoading = false;
+        this.loadTabRoutes();
     }
 
     /**

@@ -12,13 +12,7 @@ export class ChallengeService implements OnDestroy {
     private _currentChallenge = new BehaviorSubject<Challenge>(null);
     private userSub: Subscription;
 
-    constructor(private http: HttpClient, private authService: AuthService) {
-        this.userSub = this.authService.user.subscribe(user => {
-            if (!user) {
-                this._currentChallenge.next(null);
-            }
-        });
-    }
+    constructor(private http: HttpClient, private authService: AuthService) {}
 
     get currentChallenge() {
         return this._currentChallenge.asObservable();
@@ -30,26 +24,7 @@ export class ChallengeService implements OnDestroy {
         this._currentChallenge.next(newChallenge);
     }
 
-    fetchCurrentChallenge() {
-        //Does some switchMap magic to make two observable requests and use the results of one in the other.
-        return this.authService.user.pipe(
-            take(1),
-            switchMap(currentUser => {
-                if (!currentUser || !currentUser.isAuth) {
-                    return of(null);
-                }
-                return this.http.get<{ title: string; description: string; month: number; year: number; _days: Day[] }>(
-                    `https://ns-ng-course-81f18.firebaseio.com/challenge/${currentUser.id}.json?auth=${currentUser.token}`
-                );
-            }),
-            tap(resData => {
-                if (resData) {
-                    const loadedChallenge = new Challenge(resData.title, resData.description, resData.year, resData.month, resData._days);
-                    this._currentChallenge.next(loadedChallenge);
-                }
-            })
-        );
-    }
+    fetchCurrentChallenge() {}
 
     updateChallenge(title: string, description: string) {
         this._currentChallenge.pipe(take(1)).subscribe(challenge => {
@@ -75,22 +50,5 @@ export class ChallengeService implements OnDestroy {
         this.userSub.unsubscribe();
     }
 
-    private saveToServer(challenge: Challenge) {
-        this.authService.user
-            .pipe(
-                take(1),
-                switchMap(currentUser => {
-                    if (!currentUser || !currentUser.isAuth) {
-                        return of(null);
-                    }
-                    return this.http.put(
-                        `https://ns-ng-course-81f18.firebaseio.com/challenge/${currentUser.id}.json?auth=${currentUser.token}`,
-                        challenge
-                    );
-                })
-            )
-            .subscribe(res => {
-                console.log(res);
-            });
-    }
+    private saveToServer(challenge: Challenge) {}
 }

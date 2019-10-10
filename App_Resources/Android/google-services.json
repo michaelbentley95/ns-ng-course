@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "184339432390",
+    "firebase_url": "https://ns-ng-course-81f18.firebaseio.com",
+    "project_id": "ns-ng-course-81f18",
+    "storage_bucket": "ns-ng-course-81f18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184339432390:android:51704be814974c13e368c7",
+        "android_client_info": {
+          "package_name": "org.michaelbentley.MonthlyChallenge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184339432390-2f3ae638br5eud35lidqtmav1vgjnakp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYjxIwG18Lv3eQ7SozlNqS593dL3X6GBo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184339432390-2f3ae638br5eud35lidqtmav1vgjnakp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

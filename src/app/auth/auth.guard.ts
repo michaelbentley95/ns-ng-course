@@ -1,28 +1,24 @@
 import { AuthService } from "./auth.service";
-import { CanLoad, Route, UrlSegment } from "@angular/router";
+import { CanLoad } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { take, switchMap, tap } from "rxjs/operators";
 import { RouterExtensions } from "nativescript-angular/router";
+
+const firebase = require("nativescript-plugin-firebase");
 
 @Injectable()
 export class AuthGuard implements CanLoad {
     constructor(private authService: AuthService, private router: RouterExtensions) {}
 
-    canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
-        return this.authService.user.pipe(
-            take(1),
-            switchMap(currentUser => {
-                if (!currentUser || !currentUser.token) {
-                    return this.authService.autoLogin();
-                }
-                return of(true);
-            }),
-            tap(isAuth => {
-                if (!isAuth) {
-                    this.router.navigate(["/auth"]);
-                }
-            })
-        );
+    canLoad(): Observable<boolean> | Promise<boolean> | boolean {
+        let result = false;
+        firebase
+            .getCurrentUser()
+            .then((result = true))
+            .catch(err => {
+                console.log(err);
+                this.router.navigate(["/auth"]);
+            });
+        return result;
     }
 }
