@@ -12,11 +12,12 @@ import { ChallengeActionsModule } from "./challenges/challenge-actions/challenge
 
 // Uncomment and add to NgModule imports if you need to use the HttpClient wrapper
 import { NativeScriptHttpClientModule } from "nativescript-angular/http-client";
+import { EditUserComponent } from './users/edit-user/edit-user.component';
 
 @NgModule({
     bootstrap: [AppComponent],
     imports: [NativeScriptModule, NativeScriptHttpClientModule, AppRoutingModule, NativeScriptUISideDrawerModule, ChallengeActionsModule],
-    declarations: [AppComponent, DayModalComponent],
+    declarations: [AppComponent, DayModalComponent, EditUserComponent],
     providers: [],
     schemas: [NO_ERRORS_SCHEMA],
     entryComponents: [DayModalComponent],
