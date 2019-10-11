@@ -1,3 +1,4 @@
+import { RouterExtensions } from "nativescript-angular/router";
 import { AuthService } from "./auth/auth.service";
 import { UIService } from "./shared/us.service";
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef, ViewContainerRef } from "@angular/core";
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         private uiService: UIService,
         private changeDetectionRef: ChangeDetectorRef,
         private vcRef: ViewContainerRef,
-        private authService: AuthService
+        private authService: AuthService,
+        private router: RouterExtensions
     ) {}
 
     ngOnInit() {
@@ -59,6 +61,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
     onChallengeInput(challengeDescription: string) {
         this.activeChallenge = challengeDescription;
+    }
+
+    onEditProfile() {
+        this.router.navigate(["/user/edit"]);
+        this.uiService.toggleDrawer();
     }
 
     onLogout() {

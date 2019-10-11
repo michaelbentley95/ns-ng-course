@@ -1,1 +1,6 @@
-<Button text="edit-user works!" class="btn btn-primary"></Button>
+<ns-action-bar title="Edit Profile" [hasMenu]="false"></ns-action-bar>
+
+<StackLayout>
+    <Image [src]="imageSrc" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
+    <Button row="1" text="Edit Profile Pic" (tap)="onSelectSingleTap()" horizontalAlignment="center"></Button>
+</StackLayout>

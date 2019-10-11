@@ -10,6 +10,11 @@ const routes: Routes = [
         loadChildren: "~/app/challenges/challenges.module#ChallengesModule",
         canLoad: [AuthGuard],
     },
+    {
+        path: "user/edit",
+        loadChildren: "~/app/users/edit-user/edit-user.module#EditUserModule",
+        canLoad: [AuthGuard],
+    },
     { path: "", redirectTo: "/challenges/tabs", pathMatch: "full" },
 ];
 
