@@ -11,14 +11,9 @@ export class AuthGuard implements CanLoad {
     constructor(private authService: AuthService, private router: RouterExtensions) {}
 
     canLoad(): Observable<boolean> | Promise<boolean> | boolean {
-        let result = false;
-        firebase
-            .getCurrentUser()
-            .then((result = true))
-            .catch(err => {
-                console.log(err);
-                this.router.navigate(["/auth"]);
-            });
-        return result;
+        if (this.authService.getCurrentUser) {
+            return true;
+        }
+        return false;
     }
 }

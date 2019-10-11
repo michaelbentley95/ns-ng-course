@@ -7,6 +7,8 @@ import { DayStatus, Day } from "./day.model";
 import { take, tap, switchMap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
 
+const firebase = require("nativescript-plugin-firebase/app");
+
 @Injectable({ providedIn: "root" })
 export class ChallengeService implements OnDestroy {
     private _currentChallenge = new BehaviorSubject<Challenge>(null);
@@ -24,7 +26,25 @@ export class ChallengeService implements OnDestroy {
         this._currentChallenge.next(newChallenge);
     }
 
-    fetchCurrentChallenge() {}
+    fetchCurrentChallenge() {
+        this.authService
+            .getCurrentUser()
+            .then(user => {
+                let resData = firebase
+                    .firestore()
+                    .collection("challenges")
+                    .doc(user.uid);
+                resData.get().then(doc => {
+                    const obj = doc.data();
+                    const loadedChallenge = new Challenge(obj.title, obj.description, obj.year, obj.month, obj._days);
+                    this._currentChallenge.next(loadedChallenge);
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                return null;
+            });
+    }
 
     updateChallenge(title: string, description: string) {
         this._currentChallenge.pipe(take(1)).subscribe(challenge => {
@@ -50,5 +70,16 @@ export class ChallengeService implements OnDestroy {
         this.userSub.unsubscribe();
     }
 
-    private saveToServer(challenge: Challenge) {}
+    private saveToServer(challenge: Challenge) {
+        this.authService
+            .getCurrentUser()
+            .then(user => {
+                firebase
+                    .firestore()
+                    .collection("challenges")
+                    .doc(user.uid)
+                    .set(challenge);
+            })
+            .catch(err => console.log(err));
+    }
 }
