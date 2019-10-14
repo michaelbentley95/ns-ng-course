@@ -11,9 +11,19 @@ export class AuthGuard implements CanLoad {
     constructor(private authService: AuthService, private router: RouterExtensions) {}
 
     canLoad(): Observable<boolean> | Promise<boolean> | boolean {
-        if (this.authService.getCurrentUser) {
-            return true;
-        }
-        return false;
+        return new Promise(resolve => {
+            this.authService
+                .getCurrentUser()
+                .then(user => {
+                    if (user.uid != null) {
+                        resolve(true);
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.router.navigate(["/auth"]);
+                    resolve(false);
+                });
+        });
     }
 }

@@ -2,5 +2,6 @@
 
 <StackLayout>
     <Image [src]="imageSrc" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
-    <Button row="1" text="Edit Profile Pic" (tap)="onSelectSingleTap()" horizontalAlignment="center"></Button>
+    <Button row="1" text="Edit Profile Pic" (tap)="onSelectImage()" horizontalAlignment="center"></Button>
+    <Button row="1" *ngIf="imageSrc != null" text="Save Profile Pic" (tap)="onSaveImage()" horizontalAlignment="center"></Button>
 </StackLayout>
