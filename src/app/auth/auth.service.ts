@@ -57,8 +57,8 @@ export class AuthService {
         });
     }
 
-    updateName() {
-        updateProfile({});
+    updateName(newName: string) {
+        updateProfile({ displayName: newName });
     }
 
     updatePicture(uid: string, generic: boolean = false) {

@@ -12,7 +12,7 @@ const firebase = require("nativescript-plugin-firebase");
 @Component({
     selector: "ns-edit-user",
     templateUrl: "./edit-user.component.html",
-    styleUrls: ["./edit-user.component.css"],
+    styleUrls: ["./edit-user.component.scss"],
 })
 export class EditUserComponent implements OnInit, OnDestroy {
     imageAssets = [];
@@ -21,6 +21,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
     previewSize: number = 300;
     currentUser: User;
     userSub: Subscription;
+    displayName: string;
 
     private imageCropper: ImageCropper;
 
@@ -31,6 +32,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
         this.userSub = this.authService.user.subscribe(user => {
             this.currentUser = user;
         });
+        this.displayName = this.currentUser.displayName;
     }
 
     onSelectImage() {
@@ -38,10 +40,20 @@ export class EditUserComponent implements OnInit, OnDestroy {
             mode: "single",
         });
         this.selectAndCrop(context);
-        console.log(this.imageSrc);
     }
 
-    onSaveImage() {
+    onSave() {
+        if (this.imageSrc) {
+            this.uploadPicture();
+        }
+        this.authService.updateName(this.displayName);
+    }
+
+    onRemovePicture() {
+        this.authService.updatePicture(this.currentUser.uid, true);
+    }
+
+    uploadPicture() {
         const folderDest = knownFolders.documents();
         const pathDest = path.join(folderDest.path, "test.png");
         const saved: boolean = this.imageSrc.saveToFile(pathDest, "png");

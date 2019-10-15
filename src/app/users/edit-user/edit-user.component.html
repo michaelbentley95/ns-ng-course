@@ -1,7 +1,14 @@
 <ns-action-bar title="Edit Profile" [hasMenu]="false"></ns-action-bar>
 
 <StackLayout>
-    <Image [src]="imageSrc" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
-    <Button row="1" text="Edit Profile Pic" (tap)="onSelectImage()" horizontalAlignment="center"></Button>
-    <Button row="1" *ngIf="imageSrc != null" text="Save Profile Pic" (tap)="onSaveImage()" horizontalAlignment="center"></Button>
+    <Image *ngIf="!imageSrc" [src]="currentUser.photoURL" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
+    <Image *ngIf="imageSrc" [src]="imageSrc" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
+    <Button class="btn btn-rounded-lg" text="Upload Profile Pic" (tap)="onSelectImage()" horizontalAlignment="center"></Button>\
+    <Button class="btn btn-danger btn-rounded-lg" text="Remove Profile Pic" (tap)="onRemovePicture()" horizontalAlignment="center"></Button>
+    <StackLayout class="input-field">
+        <Label class="label" text="Display Name" [ngClass]="{invalid: !titleCtrl.valid && titleCtrl.touched}"></Label>
+        <TextField [(ngModel)]="displayName" class="input" required #titleCtrl="ngModel"></TextField>
+        <Label *ngIf="!titleCtrl.valid && titleCtrl.touched" text="Please enter a valid Display Name"></Label>
+    </StackLayout>
+    <Button class="btn btn-primary btn-rounded-lg" text="Save Profile" (tap)="onSave()" horizontalAlignment="center"></Button>
 </StackLayout>

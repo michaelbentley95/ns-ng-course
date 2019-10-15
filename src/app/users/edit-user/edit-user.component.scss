@@ -1,0 +1,20 @@
+@import '~nativescript-theme-core/scss/light';
+@import '../../../theme/colors';
+
+.btn {
+    width: 300;
+}
+
+.btn-success {
+    background-color: $success;
+    border-width: 1;
+    border-color: $success;
+    color: $white;
+}
+
+.btn-danger {
+    background-color: $danger;
+    border-width: 1;
+    border-color: $danger;
+    color: $white;
+}
