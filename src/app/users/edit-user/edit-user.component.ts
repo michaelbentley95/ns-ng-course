@@ -1,3 +1,5 @@
+import { NativeScriptFormsModule } from "nativescript-angular/forms";
+import { RouterExtensions } from "nativescript-angular/router";
 import { Subscription } from "rxjs";
 import { AuthService } from "./../../auth/auth.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
@@ -6,6 +8,7 @@ import { ImageCropper } from "nativescript-imagecropper";
 import { ImageSource, fromFile, fromResource, fromBase64, fromNativeSource } from "tns-core-modules/image-source";
 import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 import { User } from "nativescript-plugin-firebase";
+import { confirm } from "tns-core-modules/ui/dialogs";
 
 const firebase = require("nativescript-plugin-firebase");
 
@@ -22,10 +25,11 @@ export class EditUserComponent implements OnInit, OnDestroy {
     currentUser: User;
     userSub: Subscription;
     displayName: string;
+    isLoading = false;
 
     private imageCropper: ImageCropper;
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, private router: RouterExtensions) {}
 
     ngOnInit() {
         this.imageCropper = new ImageCropper();
@@ -43,6 +47,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
     }
 
     onSave() {
+        this.isLoading = true;
         if (this.imageSrc) {
             this.uploadPicture();
         }
@@ -50,7 +55,17 @@ export class EditUserComponent implements OnInit, OnDestroy {
     }
 
     onRemovePicture() {
-        this.authService.updatePicture(this.currentUser.uid, true);
+        confirm({
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete your picture? This action can not be undone.",
+            okButtonText: "Delete",
+            cancelButtonText: "Cancel",
+        }).then(result => {
+            // result argument is boolean
+            this.authService.updatePicture(this.currentUser.uid, true);
+            this.imageSrc = null;
+            console.log("Dialog result: " + result);
+        });
     }
 
     uploadPicture() {
@@ -77,8 +92,11 @@ export class EditUserComponent implements OnInit, OnDestroy {
                     function(uploadedFile) {
                         console.log("File uploaded: " + JSON.stringify(uploadedFile));
                         that.authService.updatePicture(that.currentUser.uid);
+                        this.isLoading = false;
+                        this.router.backToPreviousPage();
                     },
                     function(error) {
+                        this.isLoading = false;
                         console.log("File upload error: " + error);
                     }
                 );

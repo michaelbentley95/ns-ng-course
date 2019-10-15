@@ -1,6 +1,6 @@
 <ns-action-bar title="Edit Profile" [hasMenu]="false"></ns-action-bar>
 
-<StackLayout>
+<StackLayout *ngIf="!isLoading">
     <Image *ngIf="!imageSrc" [src]="currentUser.photoURL" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
     <Image *ngIf="imageSrc" [src]="imageSrc" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
     <Button class="btn btn-rounded-lg" text="Upload Profile Pic" (tap)="onSelectImage()" horizontalAlignment="center"></Button>\
@@ -12,3 +12,7 @@
     </StackLayout>
     <Button class="btn btn-primary btn-rounded-lg" text="Save Profile" (tap)="onSave()" horizontalAlignment="center"></Button>
 </StackLayout>
+
+<FlexboxLayout justifyContent="center" alignItems="center" *ngIf="isLoading">
+    <ActivityIndicator [busy]="isLoading"></ActivityIndicator>
+</FlexboxLayout>
