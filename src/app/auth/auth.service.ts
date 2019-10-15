@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { login as firebaseLogin, logout as firebaseLogout, createUser, LoginType, getCurrentUser } from "nativescript-plugin-firebase";
+import { login as firebaseLogin, logout as firebaseLogout, createUser, LoginType, getCurrentUser, updateProfile } from "nativescript-plugin-firebase";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -25,6 +25,15 @@ export class AuthService {
                 password: password,
             },
         });
+    }
+
+    updateName(){
+        updateProfile({})
+    }
+
+    updatePicture(generic?: boolean){
+
+        updateProfile({})
     }
 
     logout() {

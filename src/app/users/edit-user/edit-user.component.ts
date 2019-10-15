@@ -2,9 +2,10 @@ import { AuthService } from "./../../auth/auth.service";
 import { Component, OnInit } from "@angular/core";
 import * as imagepicker from "nativescript-imagepicker";
 import { ImageCropper } from "nativescript-imagecropper";
-import * as imageSource from "tns-core-modules/image-source";
-import * as fs from "tns-core-modules/file-system";
+import { ImageSource, fromFile, fromResource, fromBase64, fromNativeSource } from "tns-core-modules/image-source";
+import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 import { User } from "nativescript-plugin-firebase";
+
 
 const firebase = require("nativescript-plugin-firebase");
 
@@ -15,7 +16,7 @@ const firebase = require("nativescript-plugin-firebase");
 })
 export class EditUserComponent implements OnInit {
     imageAssets = [];
-    imageSrc: imageSource.ImageSource;
+    imageSrc: ImageSource;
     thumbSize: number = 80;
     previewSize: number = 300;
     user: User;
@@ -36,30 +37,38 @@ export class EditUserComponent implements OnInit {
             mode: "single",
         });
         this.selectAndCrop(context);
-        console.log(this.imageSrc.);
+        console.log(this.imageSrc);
     }
 
     onSaveImage() {
-        // firebase.storage
-        //     .uploadFile({
-        //         // the full path of the file in your Firebase storage (folders will be created)
-        //         remoteFullPath: `users/profile/${this.user.uid}.png`,
-        //         // option 1: a file-system module File object
-        //         localFile: this.imageSrc,
-        //         // get notified of file upload progress
-        //         onProgress: function(status) {
-        //             console.log("Uploaded fraction: " + status.fractionCompleted);
-        //             console.log("Percentage complete: " + status.percentageCompleted);
-        //         },
-        //     })
-        //     .then(
-        //         function(uploadedFile) {
-        //             console.log("File uploaded: " + JSON.stringify(uploadedFile));
-        //         },
-        //         function(error) {
-        //             console.log("File upload error: " + error);
-        //         }
-        //     );
+        const folderDest = knownFolders.documents();
+        const pathDest = path.join(folderDest.path, "test.png");
+        const saved: boolean = this.imageSrc.saveToFile(pathDest, "png");
+        console.log(pathDest);
+        if (saved) {
+            console.log("Image saved successfully!");
+            firebase.storage
+                .uploadFile({
+                    // the full path of the file in your Firebase storage (folders will be created)
+                    remoteFullPath: `users/profile/${this.user.uid}.png`,
+                    // option 1: a file-system module File object
+                    localFile: File.fromPath(pathDest),
+                    // get notified of file upload progress
+                    onProgress: function(status) {
+                        console.log("Uploaded fraction: " + status.fractionCompleted);
+                        console.log("Percentage complete: " + status.percentageCompleted);
+                    },
+                })
+                .then(
+                    function(uploadedFile) {
+                        console.log("File uploaded: " + JSON.stringify(uploadedFile));
+
+                    },
+                    function(error) {
+                        console.log("File upload error: " + error);
+                    }
+                );
+            }
     }
 
     private selectAndCrop(context) {
@@ -73,9 +82,9 @@ export class EditUserComponent implements OnInit {
             .then(selection => {
                 let selected = selection.length > 0 ? selection[0] : null;
                 selected.getImageAsync(source => {
-                    const selectedImgSource = imageSource.fromNativeSource(source);
+                    const selectedImgSource = fromNativeSource(source);
                     this.imageCropper
-                        .show(selectedImgSource, { width: 500, height: 500 })
+                        .show(selectedImgSource, { width: 500, height: 500, lockSquare: true })
                         .then(args => {
                             if (args.image !== null) {
                                 this.imageSrc = args.image;

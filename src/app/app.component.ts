@@ -5,6 +5,8 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorR
 import { Subscription } from "rxjs";
 import { RadSideDrawerComponent } from "nativescript-ui-sidedrawer/angular/side-drawer-directives";
 import { RadSideDrawer } from "nativescript-ui-sidedrawer";
+import {ImageSource, fromFile, fromResource, fromBase64} from "tns-core-modules/image-source";
+import {Folder, path, knownFolders} from "tns-core-modules/file-system";
 const firebase = require("nativescript-plugin-firebase");
 
 @Component({
@@ -17,6 +19,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     activeChallenge: string = "";
     private drawerSub: Subscription;
     private drawer: RadSideDrawer;
+
+    imageFromLocalFile: string;
 
     constructor(
         private uiService: UIService,
@@ -52,6 +56,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     console.log(`firebase.init error: ${error}`);
                 }
             );
+
+        //TODO: Set this with the user
+        this.imageFromLocalFile="~/app/images/asdf.png";
     }
 
     ngAfterViewInit() {
