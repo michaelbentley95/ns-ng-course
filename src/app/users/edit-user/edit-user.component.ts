@@ -1,11 +1,11 @@
+import { Subscription } from "rxjs";
 import { AuthService } from "./../../auth/auth.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import * as imagepicker from "nativescript-imagepicker";
 import { ImageCropper } from "nativescript-imagecropper";
 import { ImageSource, fromFile, fromResource, fromBase64, fromNativeSource } from "tns-core-modules/image-source";
 import { Folder, path, knownFolders, File } from "tns-core-modules/file-system";
 import { User } from "nativescript-plugin-firebase";
-
 
 const firebase = require("nativescript-plugin-firebase");
 
@@ -14,12 +14,13 @@ const firebase = require("nativescript-plugin-firebase");
     templateUrl: "./edit-user.component.html",
     styleUrls: ["./edit-user.component.css"],
 })
-export class EditUserComponent implements OnInit {
+export class EditUserComponent implements OnInit, OnDestroy {
     imageAssets = [];
     imageSrc: ImageSource;
     thumbSize: number = 80;
     previewSize: number = 300;
-    user: User;
+    currentUser: User;
+    userSub: Subscription;
 
     private imageCropper: ImageCropper;
 
@@ -27,8 +28,8 @@ export class EditUserComponent implements OnInit {
 
     ngOnInit() {
         this.imageCropper = new ImageCropper();
-        this.authService.getCurrentUser().then(thisUser => {
-            this.user = thisUser;
+        this.userSub = this.authService.user.subscribe(user => {
+            this.currentUser = user;
         });
     }
 
@@ -44,13 +45,14 @@ export class EditUserComponent implements OnInit {
         const folderDest = knownFolders.documents();
         const pathDest = path.join(folderDest.path, "test.png");
         const saved: boolean = this.imageSrc.saveToFile(pathDest, "png");
+        const that = this;
         console.log(pathDest);
         if (saved) {
             console.log("Image saved successfully!");
             firebase.storage
                 .uploadFile({
                     // the full path of the file in your Firebase storage (folders will be created)
-                    remoteFullPath: `users/profile/${this.user.uid}.png`,
+                    remoteFullPath: `users/profile/${this.currentUser.uid}.png`,
                     // option 1: a file-system module File object
                     localFile: File.fromPath(pathDest),
                     // get notified of file upload progress
@@ -62,13 +64,13 @@ export class EditUserComponent implements OnInit {
                 .then(
                     function(uploadedFile) {
                         console.log("File uploaded: " + JSON.stringify(uploadedFile));
-
+                        that.authService.updatePicture(that.currentUser.uid);
                     },
                     function(error) {
                         console.log("File upload error: " + error);
                     }
                 );
-            }
+        }
     }
 
     private selectAndCrop(context) {
@@ -98,5 +100,8 @@ export class EditUserComponent implements OnInit {
             .catch(function(e) {
                 console.log(e);
             });
+    }
+    ngOnDestroy() {
+        if (this.userSub) this.userSub.unsubscribe();
     }
 }

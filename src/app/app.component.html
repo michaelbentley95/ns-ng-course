@@ -1,6 +1,6 @@
 <RadSideDrawer>
     <FlexboxLayout tkDrawerContent class="drawer-container">
-        <Image height="250" [src]="imageFromLocalFile" stretch="aspectFit"></Image>
+        <Image height="250" [src]="currentUser.photoURL" stretch="aspectFit"></Image>
         <Button text="Edit Profile" class="btn btn-primary btn-rounded-lg" (tap)="onEditProfile()"></Button>
         <Button text="Logout" class="btn btn-primary btn-rounded-lg" (tap)="onLogout()"></Button>
     </FlexboxLayout>

@@ -1,11 +1,11 @@
-import { Page } from "tns-core-modules/ui/page";
 import { AuthService } from "./../auth/auth.service";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable, OnDestroy, OnInit } from "@angular/core";
 import { BehaviorSubject, of, Subscription } from "rxjs";
 import { Challenge } from "./challenge.model";
 import { DayStatus, Day } from "./day.model";
 import { take, tap, switchMap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
+import { User } from "nativescript-plugin-firebase";
 
 const firebase = require("nativescript-plugin-firebase/app");
 
@@ -13,8 +13,13 @@ const firebase = require("nativescript-plugin-firebase/app");
 export class ChallengeService implements OnDestroy {
     private _currentChallenge = new BehaviorSubject<Challenge>(null);
     private userSub: Subscription;
+    private currentUser: User;
 
-    constructor(private http: HttpClient, private authService: AuthService) {}
+    constructor(private http: HttpClient, private authService: AuthService) {
+        this.userSub = this.authService.user.subscribe(user => {
+            this.currentUser = user;
+        });
+    }
 
     get currentChallenge() {
         return this._currentChallenge.asObservable();
@@ -27,23 +32,15 @@ export class ChallengeService implements OnDestroy {
     }
 
     fetchCurrentChallenge() {
-        this.authService
-            .getCurrentUser()
-            .then(user => {
-                let resData = firebase
-                    .firestore()
-                    .collection("challenges")
-                    .doc(user.uid);
-                resData.get().then(doc => {
-                    const obj = doc.data();
-                    const loadedChallenge = new Challenge(obj.title, obj.description, obj.year, obj.month, obj._days);
-                    this._currentChallenge.next(loadedChallenge);
-                });
-            })
-            .catch(err => {
-                console.log(err);
-                return null;
-            });
+        let resData = firebase
+            .firestore()
+            .collection("challenges")
+            .doc(this.currentUser.uid);
+        resData.get().then(doc => {
+            const obj = doc.data();
+            const loadedChallenge = new Challenge(obj.title, obj.description, obj.year, obj.month, obj._days);
+            this._currentChallenge.next(loadedChallenge);
+        });
     }
 
     updateChallenge(title: string, description: string) {
@@ -71,15 +68,10 @@ export class ChallengeService implements OnDestroy {
     }
 
     private saveToServer(challenge: Challenge) {
-        this.authService
-            .getCurrentUser()
-            .then(user => {
-                firebase
-                    .firestore()
-                    .collection("challenges")
-                    .doc(user.uid)
-                    .set(challenge);
-            })
-            .catch(err => console.log(err));
+        firebase
+            .firestore()
+            .collection("challenges")
+            .doc(this.currentUser.uid)
+            .set(challenge);
     }
 }
