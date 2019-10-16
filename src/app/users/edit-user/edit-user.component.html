@@ -1,18 +1,20 @@
-<ns-action-bar title="Edit Profile" [hasMenu]="false"></ns-action-bar>
+<ns-action-bar title="Edit Profile" [hasMenu]="false">
+    <ActionItem ios.position="right" android.position="actionBar" (tap)="onSave()">
+        <Label text="&#xf0c7;" ios:class="fa p-5" android:class="fa p-10" android:fontSize="24"></Label>
+    </ActionItem>
+</ns-action-bar>
 
-<StackLayout *ngIf="!isLoading">
+<StackLayout *ngIf="percentComplete === null" class="form">
     <Image *ngIf="!imageSrc" [src]="currentUser.photoURL" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
     <Image *ngIf="imageSrc" [src]="imageSrc" [width]="previewSize" [height]="previewSize" stretch="aspectFit"></Image>
     <Button class="btn btn-rounded-lg" text="Upload Profile Pic" (tap)="onSelectImage()" horizontalAlignment="center"></Button>\
     <Button class="btn btn-danger btn-rounded-lg" text="Remove Profile Pic" (tap)="onRemovePicture()" horizontalAlignment="center"></Button>
     <StackLayout class="input-field">
-        <Label class="label" text="Display Name" [ngClass]="{invalid: !titleCtrl.valid && titleCtrl.touched}"></Label>
-        <TextField [(ngModel)]="displayName" class="input" required #titleCtrl="ngModel"></TextField>
-        <Label *ngIf="!titleCtrl.valid && titleCtrl.touched" text="Please enter a valid Display Name"></Label>
+        <Label class="label" text="Display Name" [ngClass]="{invalid: !displayControl.valid && displayControl.touched}"></Label>
+        <TextField [(ngModel)]="displayName" name="displayName" class="input" required #displayControl="ngModel"></TextField>
+        <Label *ngIf="!displayControl.valid && displayControl.touched" text="Please enter a valid Display Name"></Label>
     </StackLayout>
-    <Button class="btn btn-primary btn-rounded-lg" text="Save Profile" (tap)="onSave()" horizontalAlignment="center"></Button>
 </StackLayout>
 
-<FlexboxLayout justifyContent="center" alignItems="center" *ngIf="isLoading">
-    <ActivityIndicator [busy]="isLoading"></ActivityIndicator>
-</FlexboxLayout>
+<Progress *ngIf="percentComplete !== null" [value]="percentComplete" maxValue="100" class="m-20">
+</Progress>

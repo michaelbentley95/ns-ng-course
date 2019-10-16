@@ -1,4 +1,5 @@
 import { NativeScriptFormsModule } from "nativescript-angular/forms";
+import { EventData, Observable } from "tns-core-modules/data/observable";
 import { RouterExtensions } from "nativescript-angular/router";
 import { Subscription } from "rxjs";
 import { AuthService } from "./../../auth/auth.service";
@@ -26,6 +27,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
     userSub: Subscription;
     displayName: string;
     isLoading = false;
+    percentComplete: number = null;
 
     private imageCropper: ImageCropper;
 
@@ -52,6 +54,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
             this.uploadPicture();
         }
         this.authService.updateName(this.displayName);
+        this.router.backToPreviousPage();
     }
 
     onRemovePicture() {
@@ -70,12 +73,13 @@ export class EditUserComponent implements OnInit, OnDestroy {
 
     uploadPicture() {
         const folderDest = knownFolders.documents();
-        const pathDest = path.join(folderDest.path, "test.png");
+        const pathDest = path.join(folderDest.path, "profileUpload.png");
         const saved: boolean = this.imageSrc.saveToFile(pathDest, "png");
         const that = this;
         console.log(pathDest);
         if (saved) {
             console.log("Image saved successfully!");
+            that.percentComplete = 0;
             firebase.storage
                 .uploadFile({
                     // the full path of the file in your Firebase storage (folders will be created)
@@ -84,19 +88,18 @@ export class EditUserComponent implements OnInit, OnDestroy {
                     localFile: File.fromPath(pathDest),
                     // get notified of file upload progress
                     onProgress: function(status) {
-                        console.log("Uploaded fraction: " + status.fractionCompleted);
-                        console.log("Percentage complete: " + status.percentageCompleted);
+                        that.percentComplete = status.percentageCompleted;
+                        console.log("Percentage complete: " + that.percentComplete);
                     },
                 })
                 .then(
                     function(uploadedFile) {
                         console.log("File uploaded: " + JSON.stringify(uploadedFile));
                         that.authService.updatePicture(that.currentUser.uid);
-                        this.isLoading = false;
-                        this.router.backToPreviousPage();
+                        that.percentComplete = null;
                     },
                     function(error) {
-                        this.isLoading = false;
+                        that.percentComplete = null;
                         console.log("File upload error: " + error);
                     }
                 );
