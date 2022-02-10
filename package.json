@@ -38,7 +38,7 @@
     "@nativescript/schematics": "^0.7.1",
     "@ngtools/webpack": "~8.2.0",
     "nativescript-dev-webpack": "~1.2.0",
-    "node-sass": "4.12.0",
+    "node-sass": "7.0.0",
     "typescript": "~3.5.3",
     "webpack": "^4.41.0"
   },
